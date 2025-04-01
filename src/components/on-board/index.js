@@ -3,32 +3,73 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import CommonForm from "../common-form";
 import { candidateOnboardFormControls, initialCandidateFormData, initialRecruiterFormData, recruiterOnboardFormControls } from "@/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { createProfile } from "@/actions";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseClient = createClient('https://giqboywhaanfuxxfeaan.supabase.co',"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpcWJveXdoYWFuZnV4eGZlYWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwNDYxNDksImV4cCI6MjA1ODYyMjE0OX0.bE_9UzwyfoV0a9gzz1iqPdXqehHSfQzAGik2-69k4TQ")
+
+
 
 export default function OnBoard() {
     const [currentTab, setCurrentTab] = useState("candidate");
+    console.log(currentTab)
     const [recruiterFormData, setRecruiterFormData] = useState(initialRecruiterFormData);
     const [candidateFormData, setCandidateFormData] = useState(initialCandidateFormData);
-
+    const [file, setFile] = useState(null)
     function handleRecruiterFormValidation(){
       return recruiterFormData.name && recruiterFormData.name.trim() !== "" && recruiterFormData.companyName.trim() !== "" && recruiterFormData.companyRole.trim() !== "" 
     }
 
+    function handleFileChange(event) {
+        const selectedFile = event.target.files[0];
+        if (!selectedFile) return;
+        console.log(selectedFile);
+        setFile(selectedFile);
+    }
+    
+    async function handleUploadPdfToSupabase() {
+        if (!file) return;
+    
+        const { data, error } = await supabaseClient.storage
+            .from('jobify')
+            .upload(`/public/${file.name}`, file, {
+                cacheControl: "3600",
+                upsert: false
+            });
+    
+        if (error) {
+            console.error("File upload error:", error.message);
+            return;
+        }
+    
+        if (data) {
+            setCandidateFormData((prev) => ({
+                ...prev,
+                resume: data.path
+            }));
+        }
+    }
+    
+    useEffect(()=> {
+        if(file) handleUploadPdfToSupabase();
+    },[file])
+     
+    console.log(candidateFormData)
     function handleCandidateFormValidation(){
-      return Object.keys(candidateFormData).every((key)=> {
-       const value = candidateFormData[key];
-       return value !== "" && value !== null && value!==undefined
-      })
+      return Object.keys(candidateFormData).every((key)=> 
+    {  return candidateFormData[key] &&  candidateFormData[key].trim() !== ""}
+      )
     }
 
     const currentAuthUser = useUser();
+    if(!currentAuthUser) return null
     const {user} = currentAuthUser
-    console.log(currentAuthUser)
+
 
     async function createProfileAction(){
-      const data = {
+      const data ={ 
         recruiterInfo : recruiterFormData,
         role: "recruiter",
         userId: user?.id,
@@ -39,7 +80,16 @@ export default function OnBoard() {
       await createProfile(data, '/onboard')
     }
 
-    handleCandidateFormValidation();
+    async function createCandidateProfileAction(){
+        const data =  {
+            candidateInfo: candidateFormData,
+            role: "candidate",
+            isPremiumUser: false,
+            userId: user?.id,
+            email: user?.primaryEmailAddress?.emailAddress
+          }
+          await createProfile(data, "/onboard")
+    }
     return (
         <div className="bg-white">
             <Tabs value={currentTab} onValueChange={setCurrentTab}>
@@ -62,6 +112,8 @@ export default function OnBoard() {
                         setFormData={setCandidateFormData}
                         buttonText="Onboard as Candidate"
                         isBtnDisabled={!handleCandidateFormValidation()}
+                        handleFileChange={handleFileChange}  
+                       action={createCandidateProfileAction}
                     />
                 </TabsContent>
 

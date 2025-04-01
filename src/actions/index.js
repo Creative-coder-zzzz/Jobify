@@ -1,6 +1,7 @@
 "use server"
 
 import { connectToDB } from "@/database";
+import Application from "@/models/application";
 import Job from "@/models/job";
 import Profile from "@/models/profile";
 import { connect } from "mongoose";
@@ -40,4 +41,54 @@ export async function fetchJobsForRecruiterAction(id){
    
     const result = await Job.find({recruiterId: id})
     return JSON.parse(JSON.stringify(result))
+}
+
+
+export async function fetchJobsForCandidateAction(){
+    await connectToDB();
+    const result = await Job.find({})
+
+    return JSON.parse(JSON.stringify(result));
+}
+
+//create job appication
+
+export async function createJobApplicationAction(data, pathTorevalidate){
+    await connectToDB()
+    await Application.create(data);
+    revalidatePath(pathTorevalidate)
+}
+
+
+export async function fetchJobApplicationForCandidate(candidateId){
+    await connectToDB();
+    const result = await Application.find({candidateUserId: candidateId})
+
+    return JSON.parse(JSON.stringify(result))
+}
+
+
+export const fetJobApplicationForRecruiter = async (recruiterId) => {
+    try {
+        await connectToDB();
+        const result = await Application.find({ recruiterUserId: recruiterId }).lean();
+        return JSON.parse(JSON.stringify(result))
+    } catch (error) {
+        console.error("Error fetching job applications:", error);
+        return []; // Return empty array in case of failure
+    }
+};
+
+
+export async function getCandidateDetailsByIDAction(currentCandidateId){
+    try {
+        
+        
+        await connectToDB();
+        const result = await Profile.findOne({userId: currentCandidateId}).lean()
+    
+        return JSON.parse(JSON.stringify(result))
+    } catch (error) {
+        console.log("Something Went Wrong", error)
+    }
 }

@@ -62,19 +62,19 @@ export const candidateOnboardFormControls = [
     },
     {
         label: 'Notice Period',
-        name: 'Notice Period',
+        name: 'noticePeriod',
         placeholder: 'Enter your Notice Period',
         componentType: 'input' 
     },
     {
         label: 'Skills',
-        name: 'Skills',
+        name: 'skills',
         placeholder: 'Enter your Skills',
         componentType: 'input' 
     },
     {
         label: 'Previous Company',
-        name: 'previousCompany',
+        name: 'previousCompanies',
         placeholder: 'Enter your previous company ',
         componentType: 'input' 
     },

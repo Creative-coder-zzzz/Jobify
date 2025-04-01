@@ -1,18 +1,9 @@
-import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Label } from '@radix-ui/react-label';
-import { Button } from '../ui/button';
+import { Label } from "@radix-ui/react-label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
-function CommonForm({ action, buttonText, isBtnDisabled, btnType, formControls, formData, setFormData }) {
+function CommonForm({ action, buttonText, isBtnDisabled, btnType, formControls, formData, setFormData, handleFileChange }) {
     
-    function handleFileChange(event) {
-        const file = event.target.files[0];
-        setFormData({ 
-            ...formData, 
-            [event.target.id]: file 
-        });
-    }
-
     function renderInputByComponentType(getCurrentControl) {
         switch (getCurrentControl.componentType) {
             case "input":
@@ -41,18 +32,16 @@ function CommonForm({ action, buttonText, isBtnDisabled, btnType, formControls, 
                         <input 
                             id={getCurrentControl.name}
                             type="file"
-                            onChange={handleFileChange}
+                            onChange={handleFileChange} // <-- Use the prop here
                             className="hidden"
                         />
                     </Label>
                 );
 
             default:
-                return null; // Avoid duplicate rendering of "input" in the default case
+                return null; 
         }
     }
-
-
 
     return (
         <form action={action}>

@@ -24,11 +24,6 @@ async function OnBoardPage() {
         }else return <OnBoard/>
     
 
-  return (
-   <div>
-    <OnBoard/>
-   </div>
-  )
 }
 
 export default OnBoardPage

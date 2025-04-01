@@ -20,9 +20,9 @@ import { postNewJobAction } from "@/actions"
     })
 
     function handlePostNewBtnValid(){
-        return Object.keys(jobFormData).every((keys) => {
-          return jobFormData[keys].trim() !== ""
-    }
+        return Object.keys(jobFormData).every(keys =>
+            jobFormData[keys]?.trim() !== ""
+          
 )}
 
 async function  createNewJob() {
@@ -39,7 +39,7 @@ async function  createNewJob() {
     });
     setShowJobDialog(false)
 }
-console.log(user?.id, jobFormData,  "user id")
+
 return <div>
     <Button onClick={()=> setShowJobDialog(true)}   className="disabled:opacity-60 flex h-11 items-center justify-center px-5">Post A Job</Button>
     <Dialog open={showJobDialog} onOpenChange={()=> {
