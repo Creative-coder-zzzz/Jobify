@@ -49,7 +49,7 @@ function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandida
  }
  
   
-  
+  console.log(jobApplicants)
 
   return (
    <Fragment>
@@ -57,7 +57,7 @@ function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandida
       {
         jobApplicants && jobApplicants.length> 0?
         jobApplicants.map(jobApplicantItem=> 
-        <div className='bg-white shadow-lg w-full max-w-sm rounded-lg overflow-hidden mx-auto mt-4'>
+        <div key={jobApplicantItem?._id} className='bg-white shadow-lg w-full max-w-sm rounded-lg overflow-hidden mx-auto mt-4'>
           <div className='px-4 my-6 flex justify-between items-center'>
             <h3 className='text-lg font-bold'>
               {
