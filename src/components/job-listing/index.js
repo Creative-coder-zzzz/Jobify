@@ -38,7 +38,7 @@ import RecruiterJobCard from "../recruiter-job-card"
                             ? jobList.map((jobItem, index)=> profileInfo?.role === "candidate" ? (
                                <CandidateJobCard jobItem={jobItem} key={index}
                                profileInfo={profileInfo}
-                               jobApplications={jobApplications}/>
+                               jobApplications={jobApplications} />
                             ): (
                                 <RecruiterJobCard jobItem={jobItem} key={index}
                                 profileInfo={profileInfo}

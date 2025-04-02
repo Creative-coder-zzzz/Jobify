@@ -1,8 +1,9 @@
 "use client"
 import React, { Fragment } from 'react'
 import { Button } from '../ui/button'
-import { Dialog, DialogContent, DialogTitle } from '../ui/dialog'
-import { getCandidateDetailsByIDAction } from '@/actions'
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from '../ui/dialog'
+import { getCandidateDetailsByIDAction, updateJobApplicationAction } from '@/actions'
+import { createClient } from '@supabase/supabase-js'
 
 function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandidateDetails,setShowCurrentCandidateDetailsModal,showCurrentCandidateDetailsModal}) {
 
@@ -11,17 +12,44 @@ function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandida
  
     const data = await getCandidateDetailsByIDAction(getCurrentCandidateId)
 
-    console.log(data, "data", getCurrentCandidateId, "current candidate id")
-
     if(data){
       setCurrentCandidateDetails(data)
       setShowCurrentCandidateDetailsModal(true)
     }
 
   }
+ 
+  const supabaseClient = createClient('https://giqboywhaanfuxxfeaan.supabase.co',"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpcWJveXdoYWFuZnV4eGZlYWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwNDYxNDksImV4cCI6MjA1ODYyMjE0OX0.bE_9UzwyfoV0a9gzz1iqPdXqehHSfQzAGik2-69k4TQ")
+ 
+  function handlePreviewResume(){
+    const {data} = supabaseClient.storage.from('jobbo').getPublicUrl(currentCandidateDetails?.candidateInfo?.resume)
 
-  console.log(currentCandidateDetails, "candidate details")
+    const a = document.createElement('a')
+    a.href= data?.publicUrl
+    a.setAttribute('download', "resume.pdf")
+    a.setAttribute('target', '_blank')
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 
+ async function  handleJobStatusUpdate(getCurrentStatus) {
+   let cpyJobApplicants = [...jobApplicants]
+   const indexOfCurrentJobApplicant = cpyJobApplicants.findIndex(item => item.candidateUserId === currentCandidateDetails?.userId);
+   
+   const jobApplicantsToUpdate = {
+    ...cpyJobApplicants[indexOfCurrentJobApplicant],
+    status: [...cpyJobApplicants[indexOfCurrentJobApplicant].status, getCurrentStatus]
+   }
+   
+   await updateJobApplicationAction(jobApplicantsToUpdate, '/jobs')
+
+   console.log(jobApplicants)
+
+ }
+ 
+  
+  
 
   return (
    <Fragment>
@@ -54,7 +82,7 @@ function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandida
     
       <DialogContent>
       <DialogTitle>
-        Candidate List
+        Candidate Information
       </DialogTitle>
         <div>
         <h1><strong>Name : </strong> {currentCandidateDetails?.candidateInfo?.name}</h1>
@@ -71,11 +99,39 @@ function CandidateList({jobApplicants, setCurrentCandidateDetails,currentCandida
           <h1><strong>
           Previous companies : </strong> {currentCandidateDetails?.candidateInfo?.
           previousCompanies}</h1>
-          <h1><strong>Skills : </strong> {currentCandidateDetails?.candidateInfo?.currentCompany}</h1>
+          <h1><strong>Skills : </strong> {currentCandidateDetails?.candidateInfo?.skills}</h1>
           <h1><strong>Total Experience : </strong> {currentCandidateDetails?.candidateInfo?.totalExperience}</h1>
-
         </div>
+        <DialogFooter>
+        <div className='flex gap-3 '>
+          <Button     className="disabled:opacity-60 flex h-11 items-center justify-center px-5" onClick={handlePreviewResume}>Resume</Button>
+          <Button     className="disabled:opacity-60 flex h-11 items-center justify-center px-5" onClick={()=> handleJobStatusUpdate('select')} disabled= {
+          jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("select") ||  jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("reject") 
+            ? true
+             : false
+          }>
+          {
+          jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("select") 
+            ? "Selected" 
+             : "Select"
+          }
+
+          </Button>
+          <Button     className="disabled:opacity-60 flex h-11 items-center justify-center px-5" onClick={()=> handleJobStatusUpdate('reject')} disabled= {
+          jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("reject") ||  jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("select") 
+            ? true
+             : false
+          }>
+          {
+          jobApplicants.find(item => item.candidateUserId === currentCandidateDetails?.userId)?.status?.includes("reject") 
+            ? "rejected" 
+             : "reject"
+          }
+          </Button>
+        </div>
+      </DialogFooter>
       </DialogContent>
+
     </Dialog>
    </Fragment>
   )

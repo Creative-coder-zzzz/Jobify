@@ -33,7 +33,7 @@ export default function OnBoard() {
         if (!file) return;
     
         const { data, error } = await supabaseClient.storage
-            .from('jobify')
+            .from('jobbo')
             .upload(`/public/${file.name}`, file, {
                 cacheControl: "3600",
                 upsert: false

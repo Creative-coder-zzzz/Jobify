@@ -92,3 +92,24 @@ export async function getCandidateDetailsByIDAction(currentCandidateId){
         console.log("Something Went Wrong", error)
     }
 }
+
+export async function updateJobApplicationAction(data, pathToRevalidate){
+    await connectToDB();
+    const { 
+        _id, 
+         recruiterUserId,
+        name,
+        email,
+        candidateUserId,
+        status,
+        jobId,
+        jobAppliedDate} = data
+
+        await Application.findOneAndUpdate({_id: _id},{
+            recruiterUserId, name, email, candidateUserId, status, jobId, jobAppliedDate
+        }, {new: true}
+    );
+
+        revalidatePath(pathToRevalidate)
+
+}
