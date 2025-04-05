@@ -61,7 +61,7 @@ function Header({user, profileInfo}) {
                     </Link>
                     <div className='grid gap-2 py-6'>
                         {
-                            menuItems.map((menuItem, index) => (menuItem.show ? <Link href={menuItem.path} key={index} className='flex w-full items-center py-2 text-lg font-semibold'>
+                            menuItems.map((menuItem, index) => (menuItem.show ? <Link onClick={()=> sessionStorage.removeItem("filterParams")} href={menuItem.path} key={index} className='flex w-full items-center py-2 text-lg font-semibold'>
                             {menuItem.label}
                             </Link> :null))
                         }
@@ -70,7 +70,7 @@ function Header({user, profileInfo}) {
                 </SheetContent>
         </Sheet>
 
-        <Link className='hidden lg:flex mr-6 items-center' href={'/'}>
+        <Link className='hidden font-bold text-4xl lg:flex mr-6 items-center' href={'/'}>
         JOBIFY
         </Link>
         <nav className='ml-auto hidden lg:flex gap-6 items-center'>

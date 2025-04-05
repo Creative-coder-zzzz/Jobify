@@ -1,3 +1,5 @@
+import qs from "query-string";
+
 export const recruiterOnboardFormControls = [
     {
         label: 'Name',
@@ -118,6 +120,25 @@ export const candidateOnboardFormControls = [
 ]
  
 export const initialCandidateFormData = {
+
+    name: '',
+    currentJobLocation: '',
+    PrefferedJobLocation: '',
+    currentSalary: "",
+    noticePeriod: "",
+    skills: '',
+    currentCompany: '',
+    previousCompanies: '',
+    totalExperience: '',
+    graduateYear:'',
+    college: '',
+    collegeLocation: '',
+    githubProfile: '',
+    linkedinProfile: '',
+  
+}
+
+export const initialCandidateAccountFormData = {
     resume: "",
     name: '',
     currentJobLocation: '',
@@ -128,6 +149,7 @@ export const initialCandidateFormData = {
     currentCompany: '',
     previousCompanies: '',
     totalExperience: '',
+    graduateYear:'',
     college: '',
     collegeLocation: '',
     githubProfile: '',
@@ -190,3 +212,63 @@ export const initialPostNewJobFormData = {
     description: '',
     skills: ''
 }
+
+ export const filterMenuDataArray = [
+    {
+        id: "companyName",
+        label: 'Company Name'
+    },
+    {
+        id: "title",
+        label: 'Title'
+    },
+    {
+        id: "type",
+        label: 'Type'
+    },
+    {
+        id: "location",
+        label: 'Location'
+    },
+ ]
+
+ export function formUrlQuery({ params, dataToAdd }) {
+
+    let currentURL = qs.parse(params);
+  
+    if (Object.keys(dataToAdd).length > 0) {
+      Object.keys(dataToAdd).map((key) => {
+        if (dataToAdd[key].length === 0) delete currentURL[key];
+        else currentURL[key] = dataToAdd[key].join(",");
+      });
+    }
+  
+    return qs.stringifyUrl(
+      {
+        url: window.location.pathname,
+        query: currentURL,
+      },
+      {
+        skipNull: true,
+      }
+    );
+  }
+
+
+  export const membershipPlans = [
+    {
+      heading: "Tier 1",
+      price: 100,
+      type: "basic",
+    },
+    {
+      heading: "Tier 2",
+      price: 1000,
+      type: "teams",
+    },
+    {
+      heading: "Tier 3",
+      price: 5000,
+      type: "enterprise",
+    },
+  ];

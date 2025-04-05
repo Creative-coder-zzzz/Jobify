@@ -6,6 +6,7 @@ import Job from "@/models/job";
 import Profile from "@/models/profile";
 import { connect } from "mongoose";
 import { revalidatePath } from "next/cache";
+import Razorpay from "razorpay";
 
 //create profile action
 
@@ -44,12 +45,29 @@ export async function fetchJobsForRecruiterAction(id){
 }
 
 
-export async function fetchJobsForCandidateAction(){
+export async function fetchJobsForCandidateAction(filterParams = {}) {
+    console.log(filterParams, "filter Params")
     await connectToDB();
-    const result = await Job.find({})
-
+    let updatedParams = {};
+    Object.keys(filterParams).forEach((filterKey) => {
+        let value = filterParams[filterKey];
+      
+        if (typeof value === "string") {
+          updatedParams[filterKey] = { $in: value.split(",") };
+        } else if (Array.isArray(value)) {
+          updatedParams[filterKey] = { $in: value };
+        } else {
+          console.error(`Unexpected type for filterParams[${filterKey}]:`, value);
+        }
+      });
+      
+    console.log(updatedParams, "updatedParams");
+    const result = await Job.find(
+      filterParams && Object.keys(filterParams).length > 1 ? updatedParams : {}
+    );
+  
     return JSON.parse(JSON.stringify(result));
-}
+  }
 
 //create job appication
 
@@ -113,3 +131,65 @@ export async function updateJobApplicationAction(data, pathToRevalidate){
         revalidatePath(pathToRevalidate)
 
 }
+
+export async function createFilterCategoryAction(){
+    await connectToDB();
+    const result = await Job.find({});
+
+    return JSON.parse(JSON.stringify(result))
+}
+
+
+export async function updateProfileAction(data, pathToRevalidate) {
+    await connectToDB();
+    const {
+      userId,
+      role,
+      email,
+      isPremiumUser,
+      memberShipType,
+      memberShipStartDate,
+      memberShipEndDate,
+      recruiterInfo,
+      candidateInfo,
+      _id,
+    } = data;
+  
+    await Profile.findOneAndUpdate(
+      {
+        _id: _id,
+      },
+      {
+        userId,
+        role,
+        email,
+        isPremiumUser,
+        memberShipType,
+        memberShipStartDate,
+        memberShipEndDate,
+        recruiterInfo,
+        candidateInfo,
+      },
+      { new: true }
+    );
+  
+    revalidatePath(pathToRevalidate);
+  }
+  
+
+  export async function  createRazorpayOrder(plan) {
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_CLIENT_ID,
+      key_secret : process.env.RAZORPAY_KEY_SECRET
+    })
+
+    const order = await razorpay.orders.create({
+      amount: plan.price * 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    })
+
+    return {
+      orderId: order.id
+    }
+  }

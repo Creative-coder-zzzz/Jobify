@@ -11,6 +11,7 @@ import {
 import Loading from "./loading";
 import { Suspense } from "react";
 import CommonLayout from "@/components/common-layout";
+import { Toaster } from "@/components/ui/sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,8 +38,8 @@ export default function RootLayout({ children }) {
         <CommonLayout>
           {children}
         </CommonLayout>
-
         </Suspense>
+        <Toaster/>
       </body>
     </html>
     </ClerkProvider>

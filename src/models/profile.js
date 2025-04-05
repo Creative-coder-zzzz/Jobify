@@ -17,7 +17,7 @@ const profileSchema = new mongoose.Schema({
     candidateInfo: {
         name: String,
         currentJobLocation: String,
-        preferedJobLocation: String,
+        PrefferedJobLocation: String,
         currentSalary: String,
         noticePeriod: String,
         skills: String,
@@ -26,7 +26,7 @@ const profileSchema = new mongoose.Schema({
         totalExperience: String,
         college:String,
         collegeLocation: String,
-        graduatedYear: String,
+        graduateYear: String,
         linkedinProfile: String,
         githubProfile: String,
         resume: String

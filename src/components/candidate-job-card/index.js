@@ -7,6 +7,8 @@ import { Button } from '../ui/button'
 import JobIcon from '../job-icon'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '../ui/drawer'
 import { createJobApplicationAction } from '@/actions'
+import { toast } from 'sonner'
+import Link from 'next/link'
 
 function CandidateJobCard({jobItem, profileInfo, jobApplications}) {
   
@@ -14,6 +16,13 @@ function CandidateJobCard({jobItem, profileInfo, jobApplications}) {
 
   console.log(profileInfo)
   async function handleJobApply(){
+    if(!profileInfo?.isPremium && jobApplications.length >=2){
+      return toast.warning("You cannot apply for more than 2 jobs", {
+        description: "Get premium",
+        variant: "destructive",
+        action: <Link className="py-2 bg-black rounded-sm text-white whitespace-nowrap" href={'/membership'}> Buy premium</Link>
+      })
+    }
     await createJobApplicationAction({              recruiterUserId: jobItem?.recruiterId,
       name: profileInfo?.candidateInfo?.name,
       email: profileInfo?.email,
@@ -27,6 +36,7 @@ function CandidateJobCard({jobItem, profileInfo, jobApplications}) {
   return (
     <Fragment>
       <Drawer open={showJobDetailsDrawer} onOpenChange={setShowJobDetailsDrawer}>
+          
          <CommonCard icon={<JobIcon/>} title={jobItem?.title} footerContent={<Button onClick={()=> setShowJobDetailsDrawer(true)} className={"flex h-11 items-center justify-center px-5"}>View & Apply</Button>}></CommonCard>
          <DrawerContent className="p-6">
           <DrawerHeader className={"px-0"}>

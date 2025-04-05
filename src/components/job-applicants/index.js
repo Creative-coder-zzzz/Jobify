@@ -15,8 +15,6 @@ function JobApplicants({showApplicantsDrawer,setShowApplicantsDrawer,showCurrent
                 jobApplicants={jobApplicants}
                 setShowCurrentCandidateDetailsModal={setShowCurrentCandidateDetailsModal}
                 showCurrentCandidateDetailsModal={showCurrentCandidateDetailsModal}/>
-
-               
             </ScrollArea>
 
         </DrawerContent>
