@@ -4,7 +4,7 @@ import Loading from "./loading";
 import CommonLayout from "@/components/common-layout";
 import { Toaster } from "sonner";
 
-const clerkKey = NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
