@@ -2,13 +2,18 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-export default clerkMiddleware({
-  publicRoutes: ['/', '/sign-in', '/sign-up', '/not-found', '/404'],
+const middleware = clerkMiddleware((auth, req) => {
+  try {
+    console.log('✅ Clerk middleware active:', req.url);
+    return NextResponse.next();
+  } catch (err) {
+    console.error('❌ Clerk middleware failed:', err);
+    return NextResponse.next();
+  }
 });
 
+export default middleware;
+
 export const config = {
-  matcher: [
-    '/((?!_next|.*\\..*).*)', // Everything except static files
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ['/((?!_next).*)'],
 };
