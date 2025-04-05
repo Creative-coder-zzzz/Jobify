@@ -45,12 +45,13 @@ function CommonForm({ action, buttonText, isBtnDisabled, btnType, formControls, 
 
     return (
         <form action={action}>
-            {formControls.map(control => renderInputByComponentType(control))}
+            {formControls.map((control) => renderInputByComponentType(control))}
             <div className='mt-6 w-full'>
                 <Button 
                     type={btnType || "submit"}
                     disabled={isBtnDisabled}
                     className="disabled:opacity-60 flex h-11 items-center justify-center px-5"
+                   
                 >
                     {buttonText}
                 </Button>

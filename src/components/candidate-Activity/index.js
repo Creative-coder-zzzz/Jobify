@@ -42,11 +42,12 @@ function CandidateActivity({jobList, jobApplicants}) {
                             jobItem._id === filteredItemByStatus.jobId
                         ) > -1
                   )
-                  .map((finalFilteredItem) => (
+                  .map((finalFilteredItem, index) => (
                     <CommonCard
                       icon={<JobIcon />}
                       title={finalFilteredItem?.title}
                       description={finalFilteredItem?.companyName}
+                      key={index}
                     />
                   ))}
               </TabsContent>

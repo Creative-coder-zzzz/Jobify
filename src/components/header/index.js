@@ -61,7 +61,7 @@ function Header({user, profileInfo}) {
                     </Link>
                     <div className='grid gap-2 py-6'>
                         {
-                            menuItems.map((menuItem, index) => (menuItem.show ? <Link onClick={()=> sessionStorage.removeItem("filterParams")} href={menuItem.path} key={index} className='flex w-full items-center py-2 text-lg font-semibold'>
+                            menuItems.map((menuItem, index) => (menuItem.show ? <Link key={index} onClick={()=> sessionStorage.removeItem("filterParams")} href={menuItem.path}  className='flex w-full items-center py-2 text-lg font-semibold'>
                             {menuItem.label}
                             </Link> :null))
                         }
